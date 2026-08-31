@@ -4,7 +4,7 @@ import { SafeAreaView, Text, StyleSheet } from 'react-native';
 export const App = () => {
   return (
     <SafeAreaView style="{styles.container}">
-      <Text style="{styles.text}">Golf Canada Companion App</Text>
+      <Text style="{styles.text}">Garmin Golf Canada</Text>
     </SafeAreaView>
   );
 };
