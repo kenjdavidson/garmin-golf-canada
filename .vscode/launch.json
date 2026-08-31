@@ -1,0 +1,19 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "type": "monkeyc",
+      "request": "launch",
+      "name": "Launch Garmin Watch App",
+      "stopAtEntry": false,
+      "program": "${workspaceFolder}/garmin-watch/monkey.jungle"
+    },
+    {
+      "type": "reactnativedirect",
+      "request": "launch",
+      "name": "Launch React Native App",
+      "cwd": "${workspaceFolder}/phone-app",
+      "platform": "android"
+    }
+  ]
+}
