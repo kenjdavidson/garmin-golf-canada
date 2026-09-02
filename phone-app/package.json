@@ -10,11 +10,13 @@
   "dependencies": {
     "react": "18.2.0",
     "react-native": "0.72.6",
-    "react-native-garmin-connect": "^1.0.0"
+    "react-native-garmin-connect": "^0.3.0",
+    "react-native-paper": "^5.15.3",
+    "react-native-safe-area-context": "^5.9.1",
+    "react-native-vector-icons": "^10.3.0"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
-    "@types/react-native": "^0.72.2",
     "typescript": "^5.0.4"
   }
 }
