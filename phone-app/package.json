@@ -5,9 +5,11 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start"
+    "start": "react-native start",
+    "test": "tsx --test \"src/**/*.test.ts\""
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^2.2.0",
     "react": "18.2.0",
     "react-native": "0.72.6",
     "react-native-garmin-connect": "^0.3.0",
@@ -17,6 +19,7 @@
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
+    "tsx": "^4.23.13",
     "typescript": "^5.0.4"
   }
 }

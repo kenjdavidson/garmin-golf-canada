@@ -2,6 +2,49 @@ import React from 'react';
 import { StyleSheet, useColorScheme } from 'react-native';
 import { Button, MD3DarkTheme, MD3LightTheme, PaperProvider, Surface, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { AppContextProvider, useAppContext } from './context/ApplicationContext';
+
+const AppContent = () => {
+  const { state, receiveGarminMessage, clearStoredContext } = useAppContext();
+  const scoreOnHoleOne = state.scores['1'] ?? 0;
+
+  const handleConnectWatchPress = () => {
+    if (!state.courseName) {
+      receiveGarminMessage({
+        type: 'COURSE_DATA',
+        courseName: 'Golf Canada Demo Course',
+      });
+      return;
+    }
+
+    receiveGarminMessage({
+      type: 'SCORE_UPDATE',
+      holeNumber: 1,
+      strokes: scoreOnHoleOne + 1,
+    });
+  };
+
+  return (
+    <Surface style={styles.container}>
+      <Text variant="headlineMedium" style={styles.title}>Garmin Golf Canada</Text>
+      <Text variant="bodyLarge" style={styles.subtitle}>
+        Watch data and golf insights, ready to explore.
+      </Text>
+      <Text variant="bodyMedium" style={styles.dataText}>
+        Active course: {state.courseName ?? 'No course loaded'}
+      </Text>
+      <Text variant="bodyMedium" style={styles.dataText}>
+        Hole 1 strokes: {scoreOnHoleOne}
+      </Text>
+      <Button mode="contained" onPress={handleConnectWatchPress} style={styles.button}>
+        Connect watch
+      </Button>
+      <Button mode="text" onPress={() => void clearStoredContext()} style={styles.resetButton}>
+        Reset context
+      </Button>
+    </Surface>
+  );
+};
 
 export const App = () => {
   const colorScheme = useColorScheme();
@@ -29,15 +72,9 @@ export const App = () => {
   return (
     <SafeAreaProvider>
       <PaperProvider theme={paperTheme}>
-        <Surface style={styles.container}>
-          <Text variant="headlineMedium" style={styles.title}>Garmin Golf Canada</Text>
-          <Text variant="bodyLarge" style={styles.subtitle}>
-            Watch data and golf insights, ready to explore.
-          </Text>
-          <Button mode="contained" onPress={() => undefined} style={styles.button}>
-            Connect watch
-          </Button>
-        </Surface>
+        <AppContextProvider>
+          <AppContent />
+        </AppContextProvider>
       </PaperProvider>
     </SafeAreaProvider>
   );
@@ -58,7 +95,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 16,
   },
+  dataText: {
+    textAlign: 'center',
+    marginBottom: 8,
+  },
   button: {
+    marginTop: 8,
+  },
+  resetButton: {
     marginTop: 8,
   },
 });
