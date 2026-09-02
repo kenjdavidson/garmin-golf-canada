@@ -46,10 +46,7 @@ export const AppContextProvider = ({ children, repository }: AppContextProviderP
     };
   }, [contextRepository]);
 
-  const persistedState = useMemo(
-    () => toPersistedApplicationContext(state),
-    [state.courseName, state.scores]
-  );
+  const persistedState = useMemo(() => toPersistedApplicationContext(state), [state]);
 
   useEffect(() => {
     if (!state.hydrated) {

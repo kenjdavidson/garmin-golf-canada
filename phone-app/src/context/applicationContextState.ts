@@ -61,14 +61,18 @@ export const applicationContextReducer = (
         };
       }
 
-      return {
-        ...state,
-        scores: {
-          ...state.scores,
-          [String(action.message.holeNumber)]: action.message.strokes,
-        },
-        lastMessageType: action.message.type,
-      };
+      if (action.message.type === 'SCORE_UPDATE') {
+        return {
+          ...state,
+          scores: {
+            ...state.scores,
+            [String(action.message.holeNumber)]: action.message.strokes,
+          },
+          lastMessageType: action.message.type,
+        };
+      }
+
+      return state;
     case 'CLEAR':
       return {
         ...initialApplicationContextState,
