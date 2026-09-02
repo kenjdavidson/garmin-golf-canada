@@ -1,0 +1,6 @@
+{
+  "monkeyc.jungleFiles": "garmin-watch/monkey.jungle",
+  "files.associations": {
+    "*.mc": "monkeyc"
+  }
+}
