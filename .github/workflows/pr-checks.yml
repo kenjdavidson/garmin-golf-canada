@@ -1,0 +1,54 @@
+name: PR checks
+
+permissions:
+  contents: read
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+
+jobs:
+  phone-app:
+    name: React Native app
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    defaults:
+      run:
+        working-directory: phone-app
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        run: npm install --no-fund --no-audit
+
+      - name: Type-check app
+        run: npx tsc --noEmit --pretty false
+
+  garmin-watch:
+    name: Garmin watch app
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    container:
+      # Pinned by digest; version tag is retained for readability.
+      image: ghcr.io/matco/connectiq-tester:9.2.0@sha256:7a6f586cb0e0393ff288da09cf27b6dad40a0058a346c529b99fd0fc19858f0f
+    steps:
+      - name: Check out code
+        uses: actions/checkout@v4
+
+      - name: Compile Garmin app
+        working-directory: garmin-watch
+        run: |
+          set -eux
+          openssl genrsa -out /tmp/ci_key.pem 4096
+          openssl pkcs8 -topk8 -inform PEM -outform DER -in /tmp/ci_key.pem -out /tmp/ci_key.der -nocrypt
+          mkdir -p bin
+          monkeyc -f monkey.jungle -d fenix6pro -o bin/app.prg -y /tmp/ci_key.der -t -l 1
