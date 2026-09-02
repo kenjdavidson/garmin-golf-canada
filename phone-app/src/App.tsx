@@ -3,24 +3,16 @@ import { StyleSheet, useColorScheme } from 'react-native';
 import { Button, MD3DarkTheme, MD3LightTheme, PaperProvider, Surface, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppContextProvider, useAppContext } from './context/ApplicationContext';
+import { selectLastMessageType } from './context/applicationContextSelectors';
 
 const AppContent = () => {
   const { state, receiveGarminMessage, clearStoredContext } = useAppContext();
-  const scoreOnHoleOne = state.scores['1'] ?? 0;
+  const lastMessageType = selectLastMessageType(state);
 
   const handleConnectWatchPress = () => {
-    if (!state.courseName) {
-      receiveGarminMessage({
-        type: 'COURSE_DATA',
-        courseName: 'Golf Canada Demo Course',
-      });
-      return;
-    }
-
     receiveGarminMessage({
-      type: 'SCORE_UPDATE',
-      holeNumber: 1,
-      strokes: scoreOnHoleOne + 1,
+      type: 'COURSE_DATA',
+      courseName: 'Live Garmin message',
     });
   };
 
@@ -31,10 +23,7 @@ const AppContent = () => {
         Watch data and golf insights, ready to explore.
       </Text>
       <Text variant="bodyMedium" style={styles.dataText}>
-        Active course: {state.courseName ?? 'No course loaded'}
-      </Text>
-      <Text variant="bodyMedium" style={styles.dataText}>
-        Hole 1 strokes: {scoreOnHoleOne}
+        Last message type: {lastMessageType}
       </Text>
       <Button mode="contained" onPress={handleConnectWatchPress} style={styles.button}>
         Connect watch

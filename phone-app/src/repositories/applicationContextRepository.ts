@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import type { GarminMessage } from '../types/bluetooth';
 
 export const APPLICATION_CONTEXT_STORAGE_KEY = '@golf-canada/application-context/v1';
 
 export interface PersistedApplicationContext {
-  courseName: string | null;
-  scores: Record<string, number>;
+  lastGarminMessage: GarminMessage | null;
 }
 
 export interface KeyValueStorage {
@@ -14,8 +14,7 @@ export interface KeyValueStorage {
 }
 
 const defaultPersistedApplicationContext = (): PersistedApplicationContext => ({
-  courseName: null,
-  scores: {},
+  lastGarminMessage: null,
 });
 
 const normalizePersistedApplicationContext = (value: unknown): PersistedApplicationContext => {
@@ -24,18 +23,35 @@ const normalizePersistedApplicationContext = (value: unknown): PersistedApplicat
   }
 
   const record = value as Record<string, unknown>;
-  const courseName = typeof record.courseName === 'string' ? record.courseName : null;
-
-  const scores: Record<string, number> = {};
-  if (record.scores && typeof record.scores === 'object') {
-    for (const [hole, strokes] of Object.entries(record.scores)) {
-      if (typeof strokes === 'number' && Number.isFinite(strokes)) {
-        scores[hole] = strokes;
-      }
+  const message = record.lastGarminMessage;
+  if (message && typeof message === 'object') {
+    const typedMessage = message as Record<string, unknown>;
+    if (typedMessage.type === 'COURSE_DATA' && typeof typedMessage.courseName === 'string') {
+      return {
+        lastGarminMessage: {
+          type: 'COURSE_DATA',
+          courseName: typedMessage.courseName,
+        },
+      };
+    }
+    if (
+      typedMessage.type === 'SCORE_UPDATE' &&
+      typeof typedMessage.holeNumber === 'number' &&
+      Number.isFinite(typedMessage.holeNumber) &&
+      typeof typedMessage.strokes === 'number' &&
+      Number.isFinite(typedMessage.strokes)
+    ) {
+      return {
+        lastGarminMessage: {
+          type: 'SCORE_UPDATE',
+          holeNumber: typedMessage.holeNumber,
+          strokes: typedMessage.strokes,
+        },
+      };
     }
   }
 
-  return { courseName, scores };
+  return defaultPersistedApplicationContext();
 };
 
 export class ApplicationContextRepository {

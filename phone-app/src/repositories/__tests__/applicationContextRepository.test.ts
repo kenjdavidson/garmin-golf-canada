@@ -4,7 +4,7 @@ import {
   APPLICATION_CONTEXT_STORAGE_KEY,
   ApplicationContextRepository,
   type KeyValueStorage,
-} from './applicationContextRepository';
+} from '../applicationContextRepository';
 
 class InMemoryStorage implements KeyValueStorage {
   private readonly values = new Map<string, string>();
@@ -27,8 +27,7 @@ test('loads default state when no stored context exists', async () => {
   const value = await repository.load();
 
   assert.deepEqual(value, {
-    courseName: null,
-    scores: {},
+    lastGarminMessage: null,
   });
 });
 
@@ -36,8 +35,11 @@ test('saves and loads persisted context', async () => {
   const storage = new InMemoryStorage();
   const repository = new ApplicationContextRepository(storage);
   const expected = {
-    courseName: 'Championship',
-    scores: { '1': 4, '2': 3 },
+    lastGarminMessage: {
+      type: 'SCORE_UPDATE' as const,
+      holeNumber: 2,
+      strokes: 5,
+    },
   };
 
   await repository.save(expected);
@@ -58,7 +60,6 @@ test('falls back to default state when stored context is invalid JSON', async ()
   const value = await repository.load();
 
   assert.deepEqual(value, {
-    courseName: null,
-    scores: {},
+    lastGarminMessage: null,
   });
 });
