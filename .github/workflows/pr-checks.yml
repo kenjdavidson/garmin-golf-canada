@@ -51,4 +51,4 @@ jobs:
           openssl genrsa -out /tmp/ci_key.pem 4096
           openssl pkcs8 -topk8 -inform PEM -outform DER -in /tmp/ci_key.pem -out /tmp/ci_key.der -nocrypt
           mkdir -p bin
-          monkeyc -f monkey.jungle -d fenix6pro -o bin/app.prg -y /tmp/ci_key.der -t -l 1
+          monkeyc -f monkey.jungle -d fenix7 -o bin/app.prg -y /tmp/ci_key.der -t -l 1
