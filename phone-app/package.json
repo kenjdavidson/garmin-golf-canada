@@ -5,7 +5,8 @@
   "scripts": {
     "android": "react-native run-android",
     "ios": "react-native run-ios",
-    "start": "react-native start"
+    "start": "react-native start",
+    "test": "tsx --test \"src/**/__tests__/*.test.ts\""
   },
   "dependencies": {
     "react": "18.2.0",
@@ -13,10 +14,12 @@
     "react-native-garmin-connect": "^0.3.0",
     "react-native-paper": "^5.15.3",
     "react-native-safe-area-context": "^5.9.1",
-    "react-native-vector-icons": "^10.3.0"
+    "react-native-vector-icons": "^10.3.0",
+    "axios": "^1.8.4"
   },
   "devDependencies": {
     "@types/react": "^18.2.0",
-    "typescript": "^5.0.4"
+    "typescript": "^5.0.4",
+    "tsx": "^4.20.3"
   }
 }
