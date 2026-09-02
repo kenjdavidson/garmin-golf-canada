@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "garmin.monkey-c",
-    "msjsdiag.vscode-react-native"
+    "msjsdiag.vscode-react-native",
+    "dbaeumer.vscode-eslint"
   ]
 }

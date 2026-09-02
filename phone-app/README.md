@@ -13,6 +13,8 @@ React Native phone application for bridging Garmin Connect IQ watch data with Go
 - VS Code extensions:
   - `garmin.monkey-c`
   - `msjsdiag.vscode-react-native`
+  - `dbaeumer.vscode-eslint`
+- React Native Paper theming is used for shared app styling and dark/light mode support.
 
 ### Setup
 
