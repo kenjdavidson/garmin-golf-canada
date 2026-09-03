@@ -26,7 +26,7 @@ export const createApplicationContextDependencies = (): ApplicationContextDepend
 
 const defaultDependencies = createApplicationContextDependencies();
 
-export const ApplicationContextProvider = ({
+export const AuthApplicationContextProvider = ({
   children,
   dependencies = defaultDependencies,
 }: {

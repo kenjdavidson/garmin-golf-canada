@@ -1,2 +1,3 @@
 export * from './authContext';
-export * from './applicationContext';
+export * from './ApplicationContext';
+export * from './AuthApplicationContext';
