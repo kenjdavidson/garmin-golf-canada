@@ -52,7 +52,7 @@ export const AuthProvider = ({ authService, authStorage, children }: AuthProvide
       return nextSession;
     },
     logout: async () => {
-      authService.logout();
+      await Promise.resolve(authService.logout());
       setSession(undefined);
       await authStorage.clearSession();
     },
