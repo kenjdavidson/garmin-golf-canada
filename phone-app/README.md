@@ -43,4 +43,5 @@ From `phone-app/`:
 ```bash
 npm run start
 npm run android
+npm test
 ```
