@@ -135,3 +135,13 @@ test('returns undefined when stored auth session is invalid JSON', async () => {
 
   assert.equal(session, undefined);
 });
+
+test('returns undefined when stored auth session has invalid shape', async () => {
+  const storage = new InMemoryStorage();
+  await storage.setItem(APPLICATION_AUTH_STORAGE_KEY, JSON.stringify({ accessToken: 'partial-only' }));
+  const repository = new ApplicationContextRepository(storage);
+
+  const session = await repository.loadAuthSession();
+
+  assert.equal(session, undefined);
+});

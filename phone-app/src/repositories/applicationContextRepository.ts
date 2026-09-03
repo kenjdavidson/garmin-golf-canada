@@ -56,6 +56,24 @@ const normalizePersistedApplicationContext = (value: unknown): PersistedApplicat
   return defaultPersistedApplicationContext();
 };
 
+const isAuthSession = (value: unknown): value is AuthSession => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const record = value as Record<string, unknown>;
+  return (
+    typeof record.tokenType === 'string' &&
+    typeof record.accessToken === 'string' &&
+    typeof record.expiresIn === 'number' &&
+    typeof record.refreshToken === 'string' &&
+    typeof record.idToken === 'string' &&
+    typeof record.expireDate === 'string' &&
+    !!record.user &&
+    typeof record.user === 'object'
+  );
+};
+
 export class ApplicationContextRepository {
   constructor(private readonly storage: KeyValueStorage = AsyncStorage) {}
 
@@ -87,7 +105,8 @@ export class ApplicationContextRepository {
         return undefined;
       }
 
-      return JSON.parse(rawValue) as AuthSession;
+      const parsedValue = JSON.parse(rawValue);
+      return isAuthSession(parsedValue) ? parsedValue : undefined;
     } catch {
       return undefined;
     }
