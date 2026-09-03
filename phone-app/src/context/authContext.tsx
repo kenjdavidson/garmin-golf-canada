@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AuthService } from '../auth/authService';
-import { ApplicationContextRepository } from '../repositories/applicationContextRepository';
 import { type AuthSession, type LoginCredentials } from '../auth/types';
 
 export interface AuthContextValue {
@@ -11,9 +10,15 @@ export interface AuthContextValue {
   logout(): Promise<void>;
 }
 
+export interface AuthSessionStorage {
+  loadAuthSession(): Promise<AuthSession | undefined>;
+  saveAuthSession(session: AuthSession): Promise<void>;
+  clearAuthSession(): Promise<void>;
+}
+
 interface AuthProviderProps {
   authService: AuthService;
-  repository: ApplicationContextRepository;
+  repository: AuthSessionStorage;
   children: React.ReactNode;
 }
 
