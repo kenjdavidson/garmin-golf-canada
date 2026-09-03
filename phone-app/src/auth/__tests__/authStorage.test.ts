@@ -102,3 +102,14 @@ test('AsyncStorageAuthStorage uses expected storage key', async () => {
 
   assert.equal(usedKey, AUTH_STORAGE_SESSION_KEY);
 });
+
+test('AsyncStorageAuthStorage returns undefined for malformed stored JSON', async () => {
+  const backend: AuthStorageBackend = {
+    getItem: async () => '{invalid json',
+    setItem: async () => undefined,
+    removeItem: async () => undefined,
+  };
+  const storage = new AsyncStorageAuthStorage(backend);
+
+  assert.equal(await storage.getSession(), undefined);
+});

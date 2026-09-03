@@ -26,7 +26,11 @@ export class AsyncStorageAuthStorage implements AuthStorage {
       return undefined;
     }
 
-    return JSON.parse(rawValue) as AuthSession;
+    try {
+      return JSON.parse(rawValue) as AuthSession;
+    } catch {
+      return undefined;
+    }
   }
 
   async setSession(session: AuthSession): Promise<void> {
