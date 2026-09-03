@@ -146,6 +146,19 @@ test('returns undefined when stored auth session has invalid shape', async () =>
   assert.equal(session, undefined);
 });
 
+test('returns undefined when stored auth session user has invalid shape', async () => {
+  const storage = new InMemoryStorage();
+  await storage.setItem(
+    APPLICATION_AUTH_STORAGE_KEY,
+    JSON.stringify({ ...sampleSession, user: {} }),
+  );
+  const repository = new ApplicationContextRepository(storage);
+
+  const session = await repository.loadAuthSession();
+
+  assert.equal(session, undefined);
+});
+
 test('clears stored auth session', async () => {
   const storage = new InMemoryStorage();
   const repository = new ApplicationContextRepository(storage);

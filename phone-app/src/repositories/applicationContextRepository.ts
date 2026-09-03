@@ -62,6 +62,7 @@ const isAuthSession = (value: unknown): value is AuthSession => {
   }
 
   const record = value as Record<string, unknown>;
+  const user = record.user as Record<string, unknown> | undefined;
   return (
     typeof record.tokenType === 'string' &&
     typeof record.accessToken === 'string' &&
@@ -69,8 +70,10 @@ const isAuthSession = (value: unknown): value is AuthSession => {
     typeof record.refreshToken === 'string' &&
     typeof record.idToken === 'string' &&
     typeof record.expireDate === 'string' &&
-    !!record.user &&
-    typeof record.user === 'object'
+    !!user &&
+    typeof user === 'object' &&
+    typeof user.id === 'number' &&
+    typeof user.username === 'string'
   );
 };
 
