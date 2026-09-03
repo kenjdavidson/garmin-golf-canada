@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { type AuthSession } from '../auth/types';
 import type { GarminMessage } from '../types/bluetooth';
 
 export const APPLICATION_CONTEXT_STORAGE_KEY = '@golf-canada/application-context/v1';
+export const APPLICATION_AUTH_STORAGE_KEY = '@golf-canada/application-auth/v1';
 
 export interface PersistedApplicationContext {
   lastGarminMessage: GarminMessage | null;
@@ -76,5 +78,26 @@ export class ApplicationContextRepository {
 
   async clear(): Promise<void> {
     await this.storage.removeItem(APPLICATION_CONTEXT_STORAGE_KEY);
+  }
+
+  async loadAuthSession(): Promise<AuthSession | undefined> {
+    try {
+      const rawValue = await this.storage.getItem(APPLICATION_AUTH_STORAGE_KEY);
+      if (!rawValue) {
+        return undefined;
+      }
+
+      return JSON.parse(rawValue) as AuthSession;
+    } catch {
+      return undefined;
+    }
+  }
+
+  async saveAuthSession(session: AuthSession): Promise<void> {
+    await this.storage.setItem(APPLICATION_AUTH_STORAGE_KEY, JSON.stringify(session));
+  }
+
+  async clearAuthSession(): Promise<void> {
+    await this.storage.removeItem(APPLICATION_AUTH_STORAGE_KEY);
   }
 }

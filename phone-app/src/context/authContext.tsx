@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { AuthService } from '../auth/authService';
-import { type AuthStorage } from '../auth/authStorage';
+import { ApplicationContextRepository } from '../repositories/applicationContextRepository';
 import { type AuthSession, type LoginCredentials } from '../auth/types';
 
 export interface AuthContextValue {
@@ -13,19 +13,19 @@ export interface AuthContextValue {
 
 interface AuthProviderProps {
   authService: AuthService;
-  authStorage: AuthStorage;
+  repository: ApplicationContextRepository;
   children: React.ReactNode;
 }
 
 const AuthContext = createContext<AuthContextValue | undefined>(undefined);
 
-export const AuthProvider = ({ authService, authStorage, children }: AuthProviderProps) => {
+export const AuthProvider = ({ authService, repository, children }: AuthProviderProps) => {
   const [session, setSession] = useState<AuthSession | undefined>(authService.getSession());
   const [isHydrated, setIsHydrated] = useState(false);
 
   useEffect(() => {
     const hydrateSession = async () => {
-      const storedSession = await authStorage.getSession();
+      const storedSession = await repository.loadAuthSession();
       if (storedSession) {
         authService.restoreSession(storedSession);
         setSession(storedSession);
@@ -34,7 +34,7 @@ export const AuthProvider = ({ authService, authStorage, children }: AuthProvide
     };
 
     void hydrateSession();
-  }, [authService, authStorage]);
+  }, [authService, repository]);
 
   const value = useMemo<AuthContextValue>(() => ({
     session,
@@ -42,21 +42,21 @@ export const AuthProvider = ({ authService, authStorage, children }: AuthProvide
     login: async (credentials) => {
       const nextSession = await authService.login(credentials);
       setSession(nextSession);
-      await authStorage.setSession(nextSession);
+      await repository.saveAuthSession(nextSession);
       return nextSession;
     },
     refresh: async () => {
       const nextSession = await authService.refresh();
       setSession(nextSession);
-      await authStorage.setSession(nextSession);
+      await repository.saveAuthSession(nextSession);
       return nextSession;
     },
     logout: async () => {
       await authService.logout();
       setSession(undefined);
-      await authStorage.clearSession();
+      await repository.clearAuthSession();
     },
-  }), [authService, authStorage, isHydrated, session]);
+  }), [authService, repository, isHydrated, session]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

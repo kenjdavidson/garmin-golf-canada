@@ -2,17 +2,18 @@ import React from 'react';
 import { createApiClient } from '../api/apiClient';
 import { AuthApi } from '../api/authApi';
 import { InMemoryAuthRepository } from '../auth/authRepository';
-import { AsyncStorageAuthStorage, type AuthStorage } from '../auth/authStorage';
 import { AuthService } from '../auth/authService';
+import { ApplicationContextRepository } from '../repositories/applicationContextRepository';
 import { AuthProvider, useAuth } from './authContext';
 
 export interface ApplicationContextDependencies {
   authService: AuthService;
-  authStorage: AuthStorage;
+  repository: ApplicationContextRepository;
 }
 
 export const createApplicationContextDependencies = (): ApplicationContextDependencies => {
   const authRepository = new InMemoryAuthRepository();
+  const repository = new ApplicationContextRepository();
   const apiClient = createApiClient({
     getAccessToken: () => authRepository.getAccessToken(),
   });
@@ -20,7 +21,7 @@ export const createApplicationContextDependencies = (): ApplicationContextDepend
 
   return {
     authService: new AuthService(authApi, authRepository),
-    authStorage: new AsyncStorageAuthStorage(),
+    repository,
   };
 };
 
@@ -33,7 +34,7 @@ export const AuthApplicationContextProvider = ({
   children: React.ReactNode;
   dependencies?: ApplicationContextDependencies;
 }) => (
-  <AuthProvider authService={dependencies.authService} authStorage={dependencies.authStorage}>
+  <AuthProvider authService={dependencies.authService} repository={dependencies.repository}>
     {children}
   </AuthProvider>
 );

@@ -3,8 +3,10 @@ import { StyleSheet, useColorScheme } from 'react-native';
 import { Button, MD3DarkTheme, MD3LightTheme, PaperProvider, Surface, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { AppContextProvider, useAppContext } from './context/ApplicationContext';
-import { AuthApplicationContextProvider } from './context/AuthApplicationContext';
+import { AuthApplicationContextProvider, createApplicationContextDependencies } from './context/AuthApplicationContext';
 import { selectLastMessageType } from './context/applicationContextSelectors';
+
+const applicationDependencies = createApplicationContextDependencies();
 
 const AppContent = () => {
   const { state, receiveGarminMessage, clearStoredContext } = useAppContext();
@@ -60,10 +62,10 @@ export const App = () => {
         };
 
   return (
-    <AuthApplicationContextProvider>
+    <AuthApplicationContextProvider dependencies={applicationDependencies}>
       <SafeAreaProvider>
         <PaperProvider theme={paperTheme}>
-          <AppContextProvider>
+          <AppContextProvider repository={applicationDependencies.repository}>
             <AppContent />
           </AppContextProvider>
         </PaperProvider>
