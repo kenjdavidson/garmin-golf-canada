@@ -70,6 +70,7 @@ const isAuthSession = (value: unknown): value is AuthSession => {
     typeof record.refreshToken === 'string' &&
     typeof record.idToken === 'string' &&
     typeof record.expireDate === 'string' &&
+    user !== null &&
     typeof user === 'object' &&
     typeof user.id === 'number' &&
     typeof user.username === 'string'
