@@ -95,6 +95,8 @@ test('AuthApi.refresh posts refresh token grant payload', async () => {
 
   await authApi.refresh('refresh-token-abc');
 
-  assert.match(requestData, /grant_type=refresh_token/);
-  assert.match(requestData, /refresh_token=refresh-token-abc/);
+  const params = new URLSearchParams(requestData);
+  assert.equal(params.get('grant_type'), 'refresh_token');
+  assert.equal(params.get('refresh_token'), 'refresh-token-abc');
+  assert.equal(params.get('scope'), 'address email offline_access openid phone profile roles');
 });

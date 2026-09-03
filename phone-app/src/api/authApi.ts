@@ -19,6 +19,7 @@ export class AuthApi {
     return this.postTokenRequest({
       grant_type: 'refresh_token',
       refresh_token: refreshToken,
+      scope: TOKEN_SCOPE,
     });
   }
 

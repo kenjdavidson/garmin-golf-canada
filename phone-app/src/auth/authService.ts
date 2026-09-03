@@ -36,6 +36,10 @@ export class AuthService {
     return this.authRepository.getSession();
   }
 
+  restoreSession(session: AuthSession): void {
+    this.authRepository.setSession(session);
+  }
+
   private toSession(response: {
     token_type: string;
     access_token: string;

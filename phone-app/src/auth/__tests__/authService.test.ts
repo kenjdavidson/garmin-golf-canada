@@ -108,3 +108,21 @@ test('AuthService.refresh throws when refresh token does not exist', async () =>
     /No refresh token available/,
   );
 });
+
+test('AuthService.restoreSession hydrates repository state', () => {
+  const authService = new AuthService(new AuthApi(axios.create()), new InMemoryAuthRepository());
+  const restored = {
+    tokenType: 'Bearer',
+    accessToken: 'restored-access',
+    expiresIn: 3600,
+    refreshToken: 'restored-refresh',
+    idToken: 'restored-id',
+    expireDate: '2026-09-02T21:39:33.2330348Z',
+    user: createResponse('restored-access', 'restored-refresh').user,
+  };
+
+  authService.restoreSession(restored);
+
+  assert.equal(authService.getSession()?.accessToken, restored.accessToken);
+  assert.equal(authService.getSession()?.refreshToken, restored.refreshToken);
+});

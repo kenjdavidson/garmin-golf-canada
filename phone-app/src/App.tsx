@@ -2,6 +2,7 @@ import React from 'react';
 import { StyleSheet, useColorScheme } from 'react-native';
 import { Button, MD3DarkTheme, MD3LightTheme, PaperProvider, Surface, Text } from 'react-native-paper';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
+import { ApplicationContextProvider } from './context';
 
 export const App = () => {
   const colorScheme = useColorScheme();
@@ -27,19 +28,21 @@ export const App = () => {
         };
 
   return (
-    <SafeAreaProvider>
-      <PaperProvider theme={paperTheme}>
-        <Surface style={styles.container}>
-          <Text variant="headlineMedium" style={styles.title}>Garmin Golf Canada</Text>
-          <Text variant="bodyLarge" style={styles.subtitle}>
-            Watch data and golf insights, ready to explore.
-          </Text>
-          <Button mode="contained" onPress={() => undefined} style={styles.button}>
-            Connect watch
-          </Button>
-        </Surface>
-      </PaperProvider>
-    </SafeAreaProvider>
+    <ApplicationContextProvider>
+      <SafeAreaProvider>
+        <PaperProvider theme={paperTheme}>
+          <Surface style={styles.container}>
+            <Text variant="headlineMedium" style={styles.title}>Garmin Golf Canada</Text>
+            <Text variant="bodyLarge" style={styles.subtitle}>
+              Watch data and golf insights, ready to explore.
+            </Text>
+            <Button mode="contained" onPress={() => undefined} style={styles.button}>
+              Connect watch
+            </Button>
+          </Surface>
+        </PaperProvider>
+      </SafeAreaProvider>
+    </ApplicationContextProvider>
   );
 };
 
