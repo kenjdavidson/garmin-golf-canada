@@ -1,7 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { type AuthSession } from '../auth/types';
 import type { GarminMessage } from '../types/bluetooth';
 
 export const APPLICATION_CONTEXT_STORAGE_KEY = '@golf-canada/application-context/v1';
+export const APPLICATION_AUTH_STORAGE_KEY = '@golf-canada/application-auth/v1';
 
 export interface PersistedApplicationContext {
   lastGarminMessage: GarminMessage | null;
@@ -54,6 +56,27 @@ const normalizePersistedApplicationContext = (value: unknown): PersistedApplicat
   return defaultPersistedApplicationContext();
 };
 
+const isAuthSession = (value: unknown): value is AuthSession => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const record = value as Record<string, unknown>;
+  const user = record.user as Record<string, unknown> | null | undefined;
+  return (
+    typeof record.tokenType === 'string' &&
+    typeof record.accessToken === 'string' &&
+    typeof record.expiresIn === 'number' &&
+    typeof record.refreshToken === 'string' &&
+    typeof record.idToken === 'string' &&
+    typeof record.expireDate === 'string' &&
+    user != null &&
+    typeof user === 'object' &&
+    typeof user.id === 'number' &&
+    typeof user.username === 'string'
+  );
+};
+
 export class ApplicationContextRepository {
   constructor(private readonly storage: KeyValueStorage = AsyncStorage) {}
 
@@ -76,5 +99,27 @@ export class ApplicationContextRepository {
 
   async clear(): Promise<void> {
     await this.storage.removeItem(APPLICATION_CONTEXT_STORAGE_KEY);
+  }
+
+  async loadAuthSession(): Promise<AuthSession | undefined> {
+    try {
+      const rawValue = await this.storage.getItem(APPLICATION_AUTH_STORAGE_KEY);
+      if (!rawValue) {
+        return undefined;
+      }
+
+      const parsedValue = JSON.parse(rawValue);
+      return isAuthSession(parsedValue) ? parsedValue : undefined;
+    } catch {
+      return undefined;
+    }
+  }
+
+  async saveAuthSession(session: AuthSession): Promise<void> {
+    await this.storage.setItem(APPLICATION_AUTH_STORAGE_KEY, JSON.stringify(session));
+  }
+
+  async clearAuthSession(): Promise<void> {
+    await this.storage.removeItem(APPLICATION_AUTH_STORAGE_KEY);
   }
 }
